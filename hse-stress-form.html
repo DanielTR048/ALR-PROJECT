@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HSE Stress Indicator Tool – ALR Soluções em Engenharia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:          #f2f5f1;
+      --surface:     #ffffff;
+      --raised:      #edf1eb;
+      --border:      rgba(0,0,0,0.09);
+      --border-m:    rgba(0,0,0,0.18);
+      --text:        #0f1a0f;
+      --muted:       #3a4a3a;
+      --subtle:      #6a7c6a;
+      --accent:      #6db83a;
+      --accent-d:    #5ca830;
+      --accent-bg:   rgba(109,184,58,0.10);
+      --accent-bd:   rgba(109,184,58,0.30);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Barlow', sans-serif;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    #alr-scroll {
+      height: 100vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+    #alr-scroll::-webkit-scrollbar { width: 4px; }
+    #alr-scroll::-webkit-scrollbar-track { background: var(--bg); }
+    #alr-scroll::-webkit-scrollbar-thumb { background: #b8c8b0; border-radius: 4px; }
+
+    button { font-family: inherit; }
+    input, textarea, select { font-family: inherit; background: transparent; }
+    input::placeholder, textarea::placeholder { color: var(--subtle); }
+    select option { background: #fff; color: var(--text); }
+    h1,h2,h3,h4 { text-wrap: balance; }
+    p { text-wrap: pretty; }
+
+    /* ── mobile nav toggle ── */
+    .nav-links { display: flex; gap: 1.75rem; align-items: center; }
+    .nav-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 4px; }
+    .mobile-menu {
+      display: none; position: fixed; inset: 68px 0 0 0; z-index: 999;
+      background: rgba(242,245,241,0.98); backdrop-filter: blur(20px);
+      flex-direction: column; align-items: center; justify-content: center; gap: 2rem;
+      border-top: 1px solid var(--border);
+    }
+    .mobile-menu.open { display: flex; }
+
+    /* ── responsive grid helpers ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 4rem; margin-bottom: 2.5rem; }
+
+    /* ── scale row wrapping on mobile ── */
+    .scale-row { display: flex; gap: 0.4rem; padding-left: 0.1rem; flex-wrap: wrap; }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; align-items: center; justify-content: center; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .grid-3 { grid-template-columns: 1fr; gap: 1rem; }
+      .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .footer-copy { flex-direction: column; gap: 0.4rem; text-align: center; }
+      .scale-row { gap: 0.35rem; }
+      .scale-row button { min-width: 0 !important; flex: 1; padding: 0.5rem 0.3rem !important; }
+      .fator-padding { padding: 0 1rem !important; }
+      .fator-header { padding: 1rem !important; }
+    }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useCallback } = React;
+
+const C = {
+  bg:       '#f2f5f1',
+  surface:  '#ffffff',
+  raised:   '#edf1eb',
+  border:   'rgba(0,0,0,0.09)',
+  borderM:  'rgba(0,0,0,0.18)',
+  text:     '#0f1a0f',
+  muted:    '#3a4a3a',
+  subtle:   '#6a7c6a',
+  accent:   '#6db83a',
+  accentD:  '#5ca830',
+  accentBg: 'rgba(109,184,58,0.10)',
+  accentBd: 'rgba(109,184,58,0.30)',
+};
+
+const useIsMobile = () => {
+  const [mobile, setMobile] = useState(window.innerWidth <= 640);
+  useEffect(() => {
+    const h = () => setMobile(window.innerWidth <= 640);
+    window.addEventListener('resize', h);
+    return () => window.removeEventListener('resize', h);
+  }, []);
+  return mobile;
+};
+
+/* ── Logo ─────────────────────────────────────────────────────────────────── */
+const ALRLogo = ({ height = 44, textColor = C.text }) => (
+  <svg height={height} viewBox="0 0 175 54" fill="none" xmlns="http://www.w3.org/2000/svg" style={{display:'block',flexShrink:0}}>
+    <rect x="0"  y="0"  width="15" height="15" rx="2.5" fill={C.accent}/>
+    <rect x="19" y="0"  width="15" height="15" rx="2.5" fill="#2d7a1a"/>
+    <rect x="0"  y="19" width="15" height="15" rx="2.5" fill="#2d7a1a"/>
+    <rect x="19" y="19" width="15" height="15" rx="2.5" fill={C.accent}/>
+    <rect x="0"  y="38" width="15" height="15" rx="2.5" fill={C.accent}/>
+    <rect x="19" y="38" width="15" height="15" rx="2.5" fill="#2d7a1a"/>
+    <text x="42" y="50" fontFamily="'Barlow Condensed',sans-serif" fontWeight="800" fontSize="50" fill={textColor}>ALR</text>
+  </svg>
+);
+
+/* ── Btn ──────────────────────────────────────────────────────────────────── */
+const Btn = ({ children, variant='primary', size='md', onClick, style:extra={}, type='button', disabled=false, fullWidth=false }) => {
+  const [hov, setHov] = useState(false);
+  const base = {
+    display:'inline-flex', alignItems:'center', justifyContent:'center', gap:'0.45rem',
+    fontFamily:"'Barlow',sans-serif", fontWeight:700, letterSpacing:'0.02em',
+    cursor: disabled ? 'not-allowed' : 'pointer', border:'none',
+    transition:'all 0.18s ease', textDecoration:'none', whiteSpace:'nowrap', lineHeight:1,
+    opacity: disabled ? 0.4 : 1,
+    width: fullWidth ? '100%' : 'auto',
+  };
+  const sizes = {
+    sm: { fontSize:'0.82rem', padding:'0.55rem 1.1rem', borderRadius:'6px' },
+    md: { fontSize:'0.9rem',  padding:'0.7rem 1.5rem',  borderRadius:'7px' },
+    lg: { fontSize:'0.97rem', padding:'0.85rem 2rem',   borderRadius:'8px' },
+  };
+  const vars = {
+    primary: { background: hov && !disabled ? C.accentD : C.accent, color:'#0a1a0d' },
+    outline: { background:'transparent', color: hov ? C.text : C.muted, border:`1px solid ${hov ? C.borderM : C.border}` },
+    ghost:   { background: hov ? C.raised : 'transparent', color: C.muted },
+  };
+  return (
+    <button type={type} disabled={disabled}
+      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+      onClick={onClick} style={{...base,...sizes[size],...vars[variant],...extra}}>
+      {children}
+    </button>
+  );
+};
+
+/* ── NavBar ───────────────────────────────────────────────────────────────── */
+const NavBar = () => {
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const isMobile = useIsMobile();
+
+  useEffect(() => {
+    const el = document.getElementById('alr-scroll');
+    if (!el) return;
+    const h = () => setScrolled(el.scrollTop > 56);
+    el.addEventListener('scroll', h, { passive:true });
+    return () => el.removeEventListener('scroll', h);
+  }, []);
+
+  useEffect(() => { if (!isMobile) setMenuOpen(false); }, [isMobile]);
+
+  const links = [
+    { label:'Home',      href:'ALR Soluções.html' },
+    { label:'Sobre Nós', href:'ALR Soluções.html' },
+    { label:'Serviços',  href:'ALR Soluções.html' },
+    { label:'Contato',   href:'ALR Soluções.html' },
+  ];
+
+  const navBg = (scrolled || menuOpen) ? 'rgba(242,245,241,0.97)' : 'transparent';
+
+  return (
+    <>
+      <nav style={{
+        position:'fixed', top:0, left:0, right:0, zIndex:1000, height:68,
+        display:'flex', alignItems:'center', justifyContent:'space-between',
+        padding:'0 max(1.25rem, calc((100% - 1200px)/2 + 1.5rem))',
+        background: navBg,
+        backdropFilter: (scrolled || menuOpen) ? 'blur(20px)' : 'none',
+        borderBottom: (scrolled || menuOpen) ? `1px solid ${C.border}` : '1px solid transparent',
+        transition:'all 0.3s ease',
+      }}>
+        <a href="ALR Soluções.html" style={{textDecoration:'none'}}>
+          <ALRLogo height={isMobile ? 36 : 42}/>
+        </a>
+
+        <div className="nav-links">
+          {links.map(l => (
+            <a key={l.label} href={l.href} style={{
+              textDecoration:'none', fontFamily:"'Barlow',sans-serif",
+              fontWeight:500, fontSize:'0.88rem', color: C.muted, transition:'color 0.2s',
+            }}
+            onMouseEnter={e => e.currentTarget.style.color = C.text}
+            onMouseLeave={e => e.currentTarget.style.color = C.muted}
+            >{l.label}</a>
+          ))}
+          <Btn size="sm" onClick={() => window.location.href='ALR Soluções.html'}>Fale Conosco</Btn>
+        </div>
+
+        <button className="nav-hamburger" onClick={() => setMenuOpen(o => !o)}
+          style={{color: C.text, width:40, height:40}}>
+          {menuOpen
+            ? <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            : <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          }
+        </button>
+      </nav>
+
+      <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
+        {links.map(l => (
+          <a key={l.label} href={l.href} onClick={() => setMenuOpen(false)} style={{
+            textDecoration:'none', fontFamily:"'Barlow Condensed',sans-serif",
+            fontWeight:700, fontSize:'1.6rem', color: C.text, letterSpacing:'0.02em',
+          }}>{l.label}</a>
+        ))}
+        <Btn size="md" onClick={() => window.location.href='ALR Soluções.html'}>Fale Conosco</Btn>
+      </div>
+    </>
+  );
+};
+
+/* ── Footer ───────────────────────────────────────────────────────────────── */
+const Footer = () => (
+  <footer style={{
+    background: C.surface, borderTop:`1px solid ${C.border}`,
+    padding:'3rem max(1.25rem, calc((100% - 1200px)/2 + 1.5rem)) 1.75rem',
+  }}>
+    <div className="footer-grid">
+      <div>
+        <ALRLogo height={42}/>
+        <p style={{color: C.subtle, fontSize:'0.85rem', lineHeight:1.75, maxWidth:280, marginTop:'1rem'}}>
+          Confiabilidade e segurança em cada projeto. Engenharia Elétrica e Segurança do Trabalho.
+        </p>
+      </div>
+      <div>
+        <p style={{fontFamily:"'Barlow Condensed',sans-serif", fontWeight:700, fontSize:'0.68rem',
+          letterSpacing:'0.2em', textTransform:'uppercase', color: C.subtle, marginBottom:'1rem'}}>Navegação</p>
+        {['Home','Sobre Nós','Serviços','Contato'].map(l => (
+          <a key={l} href="ALR Soluções.html" style={{
+            display:'block', color: C.subtle, fontSize:'0.85rem',
+            textDecoration:'none', marginBottom:'0.6rem', transition:'color 0.2s',
+          }}
+          onMouseEnter={e => e.currentTarget.style.color = C.muted}
+          onMouseLeave={e => e.currentTarget.style.color = C.subtle}
+          >{l}</a>
+        ))}
+      </div>
+      <div>
+        <p style={{fontFamily:"'Barlow Condensed',sans-serif", fontWeight:700, fontSize:'0.68rem',
+          letterSpacing:'0.2em', textTransform:'uppercase', color: C.subtle, marginBottom:'1rem'}}>Contato</p>
+        {['contato@alrsolucoeseng.com.br','(17) 99133-2063','São José do Rio Preto, SP','Seg–Sex, 8h às 18h'].map((v,i) => (
+          <p key={i} style={{color: C.subtle, fontSize:'0.85rem', marginBottom:'0.6rem'}}>{v}</p>
+        ))}
+      </div>
+    </div>
+    <div className="footer-copy" style={{
+      borderTop:`1px solid ${C.border}`, paddingTop:'1.25rem',
+      display:'flex', justifyContent:'space-between', alignItems:'center',
+    }}>
+      <p style={{color: C.subtle, fontSize:'0.76rem', opacity:0.6}}>© 2024 ALR Soluções em Engenharia. Todos os direitos reservados.</p>
+      <p style={{color: C.subtle, fontSize:'0.76rem', opacity:0.6}}>CREA-SP · Engenharia com qualidade</p>
+    </div>
+  </footer>
+);
+
+/* ── Dados ────────────────────────────────────────────────────────────────── */
+const FATORES = [
+  { id:'demandas', fator:'Demandas', desc:'Carga de trabalho, exigências, organização e ambiente.', perguntas:[
+    'Diferentes setores exigem coisas de mim que são difíceis de conciliar?',
+    'Tenho prazos impossíveis de cumprir?',
+    'Preciso trabalhar com muita intensidade?',
+    'Preciso deixar tarefas de lado porque tenho muitas demandas?',
+    'Não tenho possibilidade de fazer pausas suficientes?',
+    'Sofro pressão para trabalhar longas horas?',
+    'Preciso trabalhar muito rápido?',
+    'Tenho pausas temporárias impossíveis de cumprir?',
+  ]},
+  { id:'controle', fator:'Controle', desc:'Autonomia para opinar em mudanças e controlar o próprio ritmo.', perguntas:[
+    'Posso decidir quando fazer uma pausa?',
+    'Tenho voz para decidir a velocidade do meu próprio trabalho?',
+    'Tenho autonomia para decidir como faço meu trabalho?',
+    'Tenho autonomia para decidir o que faço no trabalho?',
+    'Tenho alguma influência sobre a forma como realizo meu trabalho?',
+    'Meu horário de trabalho pode ser flexível?',
+  ]},
+  { id:'apoio_gestao', fator:'Apoio da Gestão', desc:'Suporte dos superiores e recursos para resolver problemas.', perguntas:[
+    'Recebo informações e suporte que me ajudam no trabalho que faço?',
+    'Posso contar com meu supervisor direto para me ajudar com problemas?',
+    'Posso conversar com meu supervisor sobre algo que me incomodou?',
+    'Recebo apoio em trabalhos emocionalmente exigentes?',
+    'Meu supervisor direto me incentiva no trabalho?',
+  ]},
+  { id:'suporte_colegas', fator:'Suporte dos Colegas', desc:'Comunicação e respeito entre os trabalhadores.', perguntas:[
+    'Se o trabalho ficar difícil, meus colegas podem me ajudar?',
+    'Recebo o apoio de que preciso dos meus colegas?',
+    'Recebo o respeito que mereço dos meus colegas?',
+    'Meus colegas estão dispostos a ouvir meus problemas do trabalho?',
+  ]},
+  { id:'relacionamentos', fator:'Relacionamentos', desc:'Comportamentos entre pessoas, conflitos e assédio.', perguntas:[
+    'Sou perseguido no trabalho?',
+    'Há atritos ou desentendimentos entre colegas?',
+    'Falam ou se comportam comigo de forma dura?',
+    'Os relacionamentos no trabalho estão desgastados?',
+  ]},
+  { id:'clareza_papel', fator:'Clareza de Função', desc:'Transparência sobre papéis, responsabilidades e reconhecimento.', perguntas:[
+    'Eu entendo claramente o que é esperado de mim no trabalho?',
+    'Sei como realizar meu trabalho?',
+    'Sei claramente quais são minhas funções e responsabilidades?',
+    'Eu entendo os objetivos e metas do meu departamento?',
+    'Eu entendo como meu trabalho contribui para o objetivo geral da empresa?',
+  ]},
+  { id:'comunicacao_mudancas', fator:'Comunicação e Mudanças', desc:'Participação dos trabalhadores em mudanças organizacionais.', perguntas:[
+    'Tenho oportunidades para pedir explicações sobre mudanças no trabalho?',
+    'Os funcionários são sempre consultados sobre mudanças?',
+    'Quando há mudanças, compreendo claramente como serão aplicadas?',
+  ]},
+];
+
+const ESCALA = [
+  { val:'1', label:'Nunca' },
+  { val:'2', label:'Raramente' },
+  { val:'3', label:'Às vezes' },
+  { val:'4', label:'Frequente' },
+  { val:'5', label:'Sempre' },
+];
+
+/* ── PerguntaRow ──────────────────────────────────────────────────────────── */
+const PerguntaRow = ({ idx, texto, value, onChange }) => {
+  const [hov, setHov] = useState(null);
+  return (
+    <div style={{ padding:'1.1rem 0', borderBottom:`1px solid ${C.border}` }}>
+      <p style={{ fontSize:'0.91rem', color: C.text, lineHeight:1.65, marginBottom:'0.85rem' }}>
+        <span style={{
+          display:'inline-flex', alignItems:'center', justifyContent:'center',
+          width:22, height:22, borderRadius:4,
+          background: value ? C.accentBg : C.raised,
+          border:`1px solid ${value ? C.accentBd : C.border}`,
+          color: value ? C.accent : C.subtle,
+          fontFamily:"'Barlow Condensed',sans-serif", fontWeight:700, fontSize:'0.75rem',
+          marginRight:'0.6rem', flexShrink:0, verticalAlign:'middle',
+          transition:'all 0.2s',
+        }}>{idx}</span>
+        {texto}
+      </p>
+      <div className="scale-row">
+        {ESCALA.map(op => {
+          const sel = value === op.val;
+          const hovered = hov === op.val;
+          return (
+            <button key={op.val} type="button"
+              onClick={() => onChange(op.val)}
+              onMouseEnter={() => setHov(op.val)}
+              onMouseLeave={() => setHov(null)}
+              style={{
+                display:'flex', flexDirection:'column', alignItems:'center', gap:'0.22rem',
+                background: sel ? C.accent : hovered ? C.raised : C.surface,
+                border:`1.5px solid ${sel ? C.accent : hovered ? C.accentBd : C.border}`,
+                borderRadius:7, padding:'0.5rem 0.6rem', cursor:'pointer',
+                transition:'all 0.14s ease', minWidth:64,
+              }}>
+              <span style={{
+                fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800, fontSize:'1.25rem',
+                color: sel ? '#0a1a0d' : hovered ? C.accent : C.muted, lineHeight:1,
+              }}>{op.val}</span>
+              <span style={{
+                fontSize:'0.65rem', fontWeight:600, letterSpacing:'0.02em',
+                color: sel ? '#0a1a0d' : C.subtle, lineHeight:1,
+              }}>{op.label}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+/* ── FatorBlock ───────────────────────────────────────────────────────────── */
+const FatorBlock = ({ fator, respostas, onChange }) => {
+  const total = fator.perguntas.length;
+  const done = fator.perguntas.filter((_, i) => respostas[`${fator.id}_${i}`]).length;
+  const completo = done === total;
+
+  return (
+    <div style={{
+      background: C.surface,
+      border:`1px solid ${completo ? C.accentBd : C.border}`,
+      borderLeft:`3px solid ${completo ? C.accent : 'rgba(109,184,58,0.22)'}`,
+      borderRadius:10, marginBottom:'1.15rem', overflow:'hidden',
+      transition:'all 0.3s', boxShadow:'0 1px 4px rgba(0,0,0,0.05)',
+    }}>
+      <div className="fator-header" style={{
+        padding:'1.1rem 1.5rem', borderBottom:`1px solid ${C.border}`,
+        display:'flex', justifyContent:'space-between', alignItems:'center', gap:'1rem',
+      }}>
+        <div style={{minWidth:0}}>
+          <h3 style={{
+            fontFamily:"'Barlow Condensed',sans-serif", fontWeight:700,
+            fontSize:'1rem', color: C.text, margin:'0 0 0.2rem',
+          }}>{fator.fator}</h3>
+          <p style={{fontSize:'0.78rem', color: C.subtle, margin:0, lineHeight:1.4}}>
+            {fator.desc}
+          </p>
+        </div>
+        <div style={{flexShrink:0, display:'flex', alignItems:'center', gap:'0.45rem'}}>
+          {completo && (
+            <span style={{
+              width:20, height:20, borderRadius:'50%',
+              background: C.accentBg, border:`1px solid ${C.accentBd}`,
+              display:'inline-flex', alignItems:'center', justifyContent:'center',
+              color: C.accent, fontSize:'0.65rem', fontWeight:800,
+            }}>✓</span>
+          )}
+          <span style={{
+            fontFamily:"'Barlow Condensed',sans-serif", fontWeight:700, fontSize:'0.8rem',
+            color: completo ? C.accent : C.subtle,
+          }}>{done}/{total}</span>
+        </div>
+      </div>
+      <div className="fator-padding" style={{padding:'0 1.5rem'}}>
+        {fator.perguntas.map((texto, i) => (
+          <PerguntaRow key={i} idx={i+1} texto={texto}
+            value={respostas[`${fator.id}_${i}`] || ''}
+            onChange={val => onChange(`${fator.id}_${i}`, val)}/>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+/* ── App ──────────────────────────────────────────────────────────────────── */
+function App() {
+  const isMobile = useIsMobile();
+  const totalPerguntas = FATORES.reduce((s, f) => s + f.perguntas.length, 0);
+
+  const [perfil, setPerfil] = useState({
+    setor:'', idade:'', sexo:'', tempo_empresa:'',
+    problema_saude_familia:'', problema_relacionamento:'', problema_financeiro:'',
+  });
+  const [respostas, setRespostas] = useState({});
+  const [status, setStatus] = useState('idle');
+
+  const respondidas = Object.keys(respostas).length;
+  const progresso = Math.round((respondidas / totalPerguntas) * 100);
+
+  const perfilCompleto =
+    perfil.setor && perfil.idade && perfil.sexo && perfil.tempo_empresa &&
+    perfil.problema_saude_familia && perfil.problema_relacionamento && perfil.problema_financeiro;
+
+  const handleResposta = (key, val) => setRespostas(prev => ({ ...prev, [key]: val }));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!perfilCompleto) { alert('Preencha todos os dados do perfil.'); return; }
+    if (respondidas < totalPerguntas) {
+      alert(`Faltam ${totalPerguntas - respondidas} perguntas para completar.`); return;
+    }
+    setStatus('sending');
+
+    const linhasRespostas = FATORES.map(fator => {
+      const linhas = fator.perguntas.map((p, i) => {
+        const val = respostas[`${fator.id}_${i}`];
+        const esc = ESCALA.find(e => e.val === val);
+        return `  ${i+1}. ${p}\n     → ${val} – ${esc ? esc.label : ''}`;
+      }).join('\n');
+      return `\n[${fator.fator.toUpperCase()}]\n${fator.desc}\n${linhas}`;
+    }).join('\n');
+
+    const mensagem = [
+      '=== DADOS DO COLABORADOR ===',
+      `Setor: ${perfil.setor}`, `Idade: ${perfil.idade}`, `Sexo: ${perfil.sexo}`,
+      `Tempo na empresa: ${perfil.tempo_empresa}`,
+      `Problemas de saúde na família: ${perfil.problema_saude_familia}`,
+      `Problemas de relacionamento familiar: ${perfil.problema_relacionamento}`,
+      `Problemas financeiros: ${perfil.problema_financeiro}`,
+      '', '=== RESPOSTAS (1-Nunca | 2-Raramente | 3-Às vezes | 4-Frequentemente | 5-Sempre) ===',
+      linhasRespostas,
+    ].join('\n');
+
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', Accept:'application/json' },
+        body: JSON.stringify({
+          access_key: 'COLOQUE_SUA_CHAVE_WEB3FORMS_AQUI',
+          subject: `HSE Stress Indicator – Setor: ${perfil.setor}`,
+          from_name: 'ALR HSE Stress Tool',
+          message: mensagem,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) setStatus('success');
+      else { console.error(data); setStatus('error'); }
+    } catch (err) { console.error(err); setStatus('error'); }
+  };
+
+  const resetForm = () => {
+    setStatus('idle'); setRespostas({});
+    setPerfil({ setor:'', idade:'', sexo:'', tempo_empresa:'',
+      problema_saude_familia:'', problema_relacionamento:'', problema_financeiro:'' });
+  };
+
+  const field = {
+    width:'100%', boxSizing:'border-box', background: C.raised,
+    border:`1px solid ${C.border}`, borderRadius:7, padding:'0.72rem 1rem',
+    fontSize:'0.92rem', color: C.text, outline:'none', transition:'border-color 0.2s',
+  };
+  const lbl = {
+    fontSize:'0.78rem', fontWeight:600, color: C.muted,
+    display:'block', marginBottom:'0.4rem', letterSpacing:'0.01em',
+  };
+
+  const pad = `max(1.25rem, calc((100% - 860px)/2 + 1.25rem))`;
+
+  const RadioGroup = ({ fieldKey, options }) => (
+    <div style={{display:'flex', gap:'0.6rem', flexWrap:'wrap'}}>
+      {options.map(opt => {
+        const sel = perfil[fieldKey] === opt;
+        return (
+          <label key={opt} style={{
+            display:'inline-flex', alignItems:'center', cursor:'pointer',
+            background: sel ? C.accentBg : C.raised,
+            border:`1.5px solid ${sel ? C.accentBd : C.border}`,
+            borderRadius:7, padding:'0.5rem 1rem',
+            fontSize:'0.9rem', color: sel ? C.accent : C.muted,
+            fontWeight: sel ? 700 : 400, transition:'all 0.15s',
+          }}>
+            <input type="radio" name={fieldKey} value={opt} checked={sel}
+              onChange={() => setPerfil(p => ({ ...p, [fieldKey]: opt }))}
+              style={{display:'none'}}/>
+            {opt}
+          </label>
+        );
+      })}
+    </div>
+  );
+
+  /* ── Sucesso ── */
+  if (status === 'success') return (
+    <div id="alr-scroll">
+      <NavBar/>
+      <div style={{
+        minHeight:'100vh', display:'flex', flexDirection:'column',
+        alignItems:'center', justifyContent:'center',
+        padding:'8rem 1.5rem 4rem', textAlign:'center', background: C.bg,
+        backgroundImage:'radial-gradient(ellipse at 50% 35%, rgba(109,184,58,0.10) 0%, transparent 60%)',
+      }}>
+        <div style={{
+          width:68, height:68, borderRadius:16, background: C.accentBg,
+          border:`1px solid ${C.accentBd}`, display:'flex', alignItems:'center',
+          justifyContent:'center', fontSize:'1.8rem', color: C.accent, margin:'0 auto 2rem',
+        }}>✓</div>
+        <h2 style={{fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800,
+          fontSize:'clamp(1.8rem,5vw,2.6rem)', color: C.text, margin:'0 0 1rem'}}>
+          Questionário enviado!
+        </h2>
+        <p style={{fontSize:'0.97rem', color: C.muted, lineHeight:1.8, maxWidth:420, margin:'0 0 2.5rem'}}>
+          Obrigado pela participação. Suas respostas foram registradas com sigilo e serão analisadas pela equipe HSE da ALR.
+        </p>
+        <Btn onClick={resetForm}>Preencher novamente</Btn>
+      </div>
+      <Footer/>
+    </div>
+  );
+
+  return (
+    <div id="alr-scroll">
+      <NavBar/>
+
+      {/* ── Header ── */}
+      <div style={{
+        background: C.bg,
+        backgroundImage:[
+          'radial-gradient(ellipse at 8% 80%, rgba(109,184,58,0.16) 0%, transparent 50%)',
+          'radial-gradient(ellipse at 92% 15%, rgba(109,184,58,0.08) 0%, transparent 45%)',
+        ].join(','),
+        padding:`${isMobile ? '6rem' : '7.5rem'} ${pad} ${isMobile ? '2.5rem' : '3.5rem'}`,
+        borderBottom:`1px solid ${C.border}`,
+      }}>
+        <span style={{
+          display:'inline-block', background: C.accentBg, border:`1px solid ${C.accentBd}`,
+          color: C.accent, fontFamily:"'Barlow',sans-serif", fontWeight:700,
+          fontSize:'0.7rem', letterSpacing:'0.12em', textTransform:'uppercase',
+          padding:'0.28rem 0.7rem', borderRadius:4, marginBottom:'1.25rem',
+        }}>HSE · Saúde e Segurança do Trabalho</span>
+
+        <h1 style={{
+          fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800,
+          fontSize:'clamp(1.9rem,5vw,3.2rem)', color: C.text,
+          margin:'0 0 1rem', lineHeight:1.05, maxWidth:600,
+        }}>
+          Indicador de Estresse<br/>no Trabalho
+        </h1>
+        <p style={{
+          fontSize: isMobile ? '0.92rem' : '0.97rem',
+          color: C.muted, lineHeight:1.8, maxWidth:520, margin:'0 0 2rem',
+        }}>
+          Responda com base na sua relação com o trabalho — não na vida pessoal.
+          As respostas são tratadas com total sigilo pela equipe ALR.
+        </p>
+
+        {/* ── Progresso visível ── */}
+        <div style={{maxWidth: isMobile ? '100%' : 480}}>
+          <div style={{
+            display:'flex', justifyContent:'space-between', alignItems:'center',
+            marginBottom:'0.6rem',
+          }}>
+            <span style={{
+              fontFamily:"'Barlow',sans-serif", fontWeight:600, fontSize:'0.82rem', color: C.muted,
+            }}>Progresso do questionário</span>
+            <span style={{
+              fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800,
+              fontSize:'0.95rem', color: progresso === 100 ? C.accent : C.muted,
+              background: progresso === 100 ? C.accentBg : C.raised,
+              border:`1px solid ${progresso === 100 ? C.accentBd : C.border}`,
+              borderRadius:5, padding:'0.1rem 0.55rem', transition:'all 0.3s',
+            }}>{progresso}%</span>
+          </div>
+          <div style={{height:7, background:'rgba(0,0,0,0.10)', borderRadius:10, overflow:'hidden'}}>
+            <div style={{
+              height:'100%', width:`${progresso}%`, background: C.accent,
+              borderRadius:10, transition:'width 0.4s ease',
+              boxShadow: progresso > 0 ? '0 0 8px rgba(109,184,58,0.4)' : 'none',
+            }}/>
+          </div>
+          <p style={{
+            fontFamily:"'Barlow',sans-serif", fontSize:'0.75rem', color: C.subtle,
+            marginTop:'0.4rem',
+          }}>{respondidas} de {totalPerguntas} perguntas respondidas</p>
+        </div>
+      </div>
+
+      {/* ── Legenda sticky ── */}
+      <div style={{
+        position:'sticky', top:0, zIndex:50,
+        background:'rgba(242,245,241,0.97)', backdropFilter:'blur(16px)',
+        borderBottom:`1px solid ${C.border}`,
+        padding:`0.75rem ${pad}`,
+        display:'flex', gap:'0.5rem 1.25rem', flexWrap:'wrap', alignItems:'center',
+      }}>
+        <span style={{
+          fontFamily:"'Barlow',sans-serif", fontWeight:700, fontSize:'0.72rem',
+          letterSpacing:'0.12em', textTransform:'uppercase', color: C.muted, flexShrink:0,
+        }}>Escala:</span>
+        {ESCALA.map(e => (
+          <span key={e.val} style={{
+            fontFamily:"'Barlow',sans-serif", fontSize:'0.8rem', color: C.muted,
+          }}>
+            <b style={{
+              fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800,
+              fontSize:'0.95rem', color:'#2d6e1a',
+            }}>{e.val}</b>
+            <span style={{color: C.subtle}}> {e.label}</span>
+          </span>
+        ))}
+      </div>
+
+      <form onSubmit={handleSubmit} style={{padding:`2.5rem ${pad} 5rem`}}>
+
+        {/* ── Perfil ── */}
+        <div style={{
+          background: C.surface, border:`1px solid ${C.border}`,
+          borderTop:`3px solid ${C.accent}`, borderRadius:10,
+          padding: isMobile ? '1.25rem' : '1.75rem', marginBottom:'2rem',
+          boxShadow:'0 2px 12px rgba(0,0,0,0.06)',
+        }}>
+          <p style={{fontFamily:"'Barlow Condensed',sans-serif", fontWeight:700,
+            fontSize:'0.68rem', letterSpacing:'0.18em', textTransform:'uppercase',
+            color: C.muted, marginBottom:'1.5rem'}}>Dados do Colaborador</p>
+
+          <div className="grid-2" style={{marginBottom:'1rem'}}>
+            <div>
+              <label style={lbl}>Setor de Trabalho *</label>
+              <input required style={field} placeholder="Produção, Manutenção, Administrativo..."
+                value={perfil.setor}
+                onFocus={e => e.target.style.borderColor = C.accentBd}
+                onBlur={e => e.target.style.borderColor = C.border}
+                onChange={e => setPerfil(p => ({...p, setor: e.target.value}))}/>
+            </div>
+            <div>
+              <label style={lbl}>Idade *</label>
+              <input required type="number" min="16" max="80" style={field} placeholder="Ex.: 32"
+                value={perfil.idade}
+                onFocus={e => e.target.style.borderColor = C.accentBd}
+                onBlur={e => e.target.style.borderColor = C.border}
+                onChange={e => setPerfil(p => ({...p, idade: e.target.value}))}/>
+            </div>
+          </div>
+
+          <div style={{marginBottom:'1rem'}}>
+            <label style={lbl}>Tempo na empresa *</label>
+            <select required style={{...field, cursor:'pointer'}}
+              value={perfil.tempo_empresa}
+              onFocus={e => e.target.style.borderColor = C.accentBd}
+              onBlur={e => e.target.style.borderColor = C.border}
+              onChange={e => setPerfil(p => ({...p, tempo_empresa: e.target.value}))}>
+              <option value="">Selecione...</option>
+              <option>Menos de 6 meses</option>
+              <option>6 meses a 1 ano</option>
+              <option>1 a 3 anos</option>
+              <option>3 a 5 anos</option>
+              <option>Mais de 5 anos</option>
+            </select>
+          </div>
+
+          <div style={{marginBottom:'1.5rem'}}>
+            <label style={{...lbl, marginBottom:'0.6rem'}}>Sexo *</label>
+            <RadioGroup fieldKey="sexo" options={['Masculino','Feminino']}/>
+          </div>
+
+          <div style={{
+            background: C.raised, border:`1px solid ${C.border}`,
+            borderLeft:`3px solid rgba(109,184,58,0.4)`,
+            borderRadius:8, padding:'0.85rem 1rem', marginBottom:'1.25rem',
+          }}>
+            <p style={{fontSize:'0.8rem', color: C.subtle, lineHeight:1.6, margin:0}}>
+              As questões abaixo são apenas para contextualização estatística e não influenciam sua avaliação profissional.
+            </p>
+          </div>
+
+          <div className="grid-3">
+            {[
+              { key:'problema_saude_familia',  label:'Problemas de saúde na família?' },
+              { key:'problema_relacionamento', label:'Problemas de relacionamento familiar?' },
+              { key:'problema_financeiro',     label:'Problemas financeiros?' },
+            ].map(({ key, label }) => (
+              <div key={key}>
+                <label style={{...lbl, marginBottom:'0.6rem'}}>{label} *</label>
+                <RadioGroup fieldKey={key} options={['Sim','Não']}/>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Perguntas ── */}
+        <p style={{fontFamily:"'Barlow Condensed',sans-serif", fontWeight:700,
+          fontSize:'0.68rem', letterSpacing:'0.18em', textTransform:'uppercase',
+          color: C.muted, margin:'0 0 1.15rem'}}>
+          Perguntas sobre o Trabalho
+        </p>
+
+        {FATORES.map(fator => (
+          <FatorBlock key={fator.id} fator={fator} respostas={respostas} onChange={handleResposta}/>
+        ))}
+
+        {/* ── Envio ── */}
+        <div style={{
+          background: C.surface, border:`1px solid ${C.accentBd}`,
+          borderRadius:10, padding: isMobile ? '1.25rem' : '1.75rem',
+          display:'flex', flexDirection:'column', alignItems:'center',
+          textAlign:'center', gap:'0.85rem', marginTop:'0.75rem',
+          boxShadow:`0 0 0 4px ${C.accentBg}`,
+        }}>
+          {respondidas < totalPerguntas && (
+            <p style={{fontSize:'0.84rem', color: C.subtle}}>
+              Faltam <strong style={{color: C.muted}}>{totalPerguntas - respondidas}</strong> perguntas — complete todas para enviar.
+            </p>
+          )}
+          {status === 'error' && (
+            <p style={{fontSize:'0.84rem', color:'#c0392b'}}>
+              Erro ao enviar. Verifique sua conexão e tente novamente.
+            </p>
+          )}
+          <Btn type="submit" size="lg" fullWidth={isMobile}
+            disabled={status === 'sending' || respondidas < totalPerguntas || !perfilCompleto}
+            style={{minWidth: isMobile ? 'auto' : 260}}>
+            {status === 'sending' ? 'Enviando...' : 'Enviar Questionário →'}
+          </Btn>
+          <p style={{fontSize:'0.74rem', color: C.subtle}}>
+            Suas respostas são tratadas com sigilo e usadas exclusivamente para gestão em saúde e segurança.
+          </p>
+        </div>
+
+      </form>
+      <Footer/>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
