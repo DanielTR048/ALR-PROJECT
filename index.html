@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ALR Soluções em Engenharia – Confiabilidade e Segurança</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body { background: #070d08; color: #f0f8f0; overflow: hidden; }
+
+    #alr-scroll {
+      height: 100vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+    #alr-scroll::-webkit-scrollbar { width: 5px; }
+    #alr-scroll::-webkit-scrollbar-track { background: #070d08; }
+    #alr-scroll::-webkit-scrollbar-thumb { background: #1e6b35; border-radius: 3px; }
+
+    button { font-family: inherit; }
+    input, textarea, select {
+      font-family: inherit;
+      background: transparent;
+    }
+    input::placeholder, textarea::placeholder { color: #3a5a3a; }
+    select option { background: #0f2314; color: #c8dcc8; }
+    h1,h2,h3,h4 { text-wrap: balance; }
+    p { text-wrap: pretty; }
+
+    /* Smooth page transitions */
+    .page-enter {
+      animation: fadeUp 0.35s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="alr-components.jsx"></script>
+<script type="text/babel" src="alr-home-sections.jsx"></script>
+<script type="text/babel" src="alr-pages.jsx"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+// Error boundary
+class ErrBoundary extends React.Component {
+  constructor(p){ super(p); this.state={err:null}; }
+  static getDerivedStateFromError(e){ return {err:e.message}; }
+  render(){
+    if(this.state.err) return (
+      <div style={{padding:'2rem',color:'#f00',background:'#111',fontFamily:'monospace',fontSize:'0.85rem',margin:'4rem auto',maxWidth:800,borderRadius:8}}>
+        <b>Render error:</b> {this.state.err}
+      </div>
+    );
+    return this.props.children;
+  }
+}
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "theme": "corporativo",
+  "heroLayout": "split"
+}/*EDITMODE-END*/;
+
+function App() {
+  const [page, setPage] = useState('home');
+  const [t, setTweak]   = useTweaks(TWEAK_DEFAULTS);
+
+  const navigate = (p) => {
+    if (p === page) return;
+    setPage(p);
+    const el = document.getElementById('alr-scroll');
+    if (el) el.scrollTop = 0;
+  };
+
+  useEffect(() => {
+    const scroll = document.getElementById('alr-scroll');
+    if (scroll) scroll.style.background = t.theme === 'corporativo' ? '#f5faf5' : '#070d08';
+  }, [t.theme]);
+
+  return (
+    <div id="alr-scroll">
+      <NavBar currentPage={page} onNavigate={navigate}/>
+
+      <div key={page} className="page-enter">
+        <ErrBoundary>
+          {page === 'home'     && <HomePage     heroLayout={t.heroLayout} theme={t.theme} onNavigate={navigate}/>}
+          {page === 'sobre'    && <SobrePage    theme={t.theme} onNavigate={navigate}/>}
+          {page === 'servicos' && <ServicosPage theme={t.theme} onNavigate={navigate}/>}
+          {page === 'contato'  && <ContatoPage  theme={t.theme}/>}
+        </ErrBoundary>
+      </div>
+
+      <Footer onNavigate={navigate}/>
+
+      <TweaksPanel>
+        <TweakSection label="Tema Visual"/>
+        <TweakRadio
+          label="Esquema de cores"
+          value={t.theme}
+          options={['escuro', 'corporativo']}
+          onChange={v => setTweak('theme', v)}
+        />
+        <TweakSection label="Hero (Página Inicial)"/>
+        <TweakRadio
+          label="Layout do hero"
+          value={t.heroLayout}
+          options={['split', 'centered']}
+          onChange={v => setTweak('heroLayout', v)}
+        />
+      </TweaksPanel>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
