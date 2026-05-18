@@ -82,6 +82,7 @@ const NavBar = ({ currentPage, onNavigate }) => {
     { id:'home',     label:'Home' },
     { id:'sobre',    label:'Sobre Nós' },
     { id:'servicos', label:'Serviços' },
+    { id:'clientes', label:'Clientes' },
     { id:'contato',  label:'Contato' },
   ];
 
@@ -125,6 +126,7 @@ const Footer = ({ onNavigate }) => {
     { id:'home', label:'Home' },
     { id:'sobre', label:'Sobre Nós' },
     { id:'servicos', label:'Serviços' },
+    { id:'clientes', label:'Clientes' },
     { id:'contato', label:'Contato' },
   ];
   return (
@@ -135,7 +137,7 @@ const Footer = ({ onNavigate }) => {
         <div>
           <ALRLogo height={50} textColor="#c8dcc8"/>
           <p style={{...col('#5a7a5a'), marginTop:'1.25rem', lineHeight:1.75, maxWidth:300, fontSize:'0.87rem'}}>
-            Confiabilidade e segurança em cada projeto. Equipe especializada em Engenharia Elétrica e Segurança do Trabalho.
+            Confiabilidade e segurança em cada projeto. Equipe especializada em Engenharia de Segurança, Engenharia Elétrica e Medicina do Trabalho.
           </p>
           <div style={{display:'flex', gap:'1.25rem', marginTop:'1.5rem'}}>
             {['WhatsApp','Facebook','Instagram'].map(s => (

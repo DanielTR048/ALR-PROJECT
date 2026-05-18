@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ALR Soluções em Engenharia – Confiabilidade e Segurança</title>
+  <title>ALR Soluções em Engenharia, Segurança e Medicina do Trabalho</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
@@ -77,11 +77,21 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 }/*EDITMODE-END*/;
 
 function App() {
-  const [page, setPage] = useState('home');
+  const [page, setPage] = useState(window.ALR_INITIAL_PAGE || 'home');
   const [t, setTweak]   = useTweaks(TWEAK_DEFAULTS);
 
   const navigate = (p) => {
-    if (p === page) return;
+    const urls = window.ALR_PAGE_URLS || {
+      home: './',
+      sobre: './sobre/',
+      servicos: './servicos/',
+      clientes: './clientes/',
+      contato: './contato/',
+    };
+    if (p !== page && urls[p]) {
+      window.location.href = urls[p];
+      return;
+    }
     setPage(p);
     const el = document.getElementById('alr-scroll');
     if (el) el.scrollTop = 0;
@@ -101,6 +111,7 @@ function App() {
           {page === 'home'     && <HomePage     heroLayout={t.heroLayout} theme={t.theme} onNavigate={navigate}/>}
           {page === 'sobre'    && <SobrePage    theme={t.theme} onNavigate={navigate}/>}
           {page === 'servicos' && <ServicosPage theme={t.theme} onNavigate={navigate}/>}
+          {page === 'clientes' && <ClientesPage theme={t.theme} onNavigate={navigate}/>}
           {page === 'contato'  && <ContatoPage  theme={t.theme}/>}
         </ErrBoundary>
       </div>

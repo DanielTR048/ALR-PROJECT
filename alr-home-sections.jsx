@@ -9,13 +9,13 @@ const th = (theme, dark, light) => theme === 'corporativo' ? light : dark;
 const HeroSection = ({ heroLayout, onNavigate }) => {
   const isSplit = heroLayout === 'split';
 
-  const nrs = ['NR-01','NR-06','NR-10','NR-12','NR-15/16','PCMSO'];
+  const nrs = ['NR-01','NR-07','NR-10','NR-12','NR-15/16','eSocial'];
 
   const stats = [
-    { val:'15+',  sub:'anos de\nexperiência' },
-    { val:'300+', sub:'empresas\natendidas' },
+    { val:'20+',  sub:'anos de\nexperiência' },
+    { val:'BR', sub:'atendimento\nnacional' },
     { val:'100%', sub:'conformidade\ncom NRs' },
-    { val:'20+',  sub:'tipos de\nlaudos' },
+    { val:'3',  sub:'áreas\nintegradas' },
   ];
 
   // Verde escuro = peso, seriedade / Verde vivo = destaque, energia
@@ -115,7 +115,7 @@ const HeroSection = ({ heroLayout, onNavigate }) => {
             fontFamily:"'Barlow',sans-serif", color:'rgba(0,0,0,0.52)', fontSize:'1rem',
             lineHeight:1.8, maxWidth: isSplit ? 400 : 520, margin:'0 0 2.5rem',
           }}>
-            Soluções especializadas em Engenharia Elétrica e Segurança do Trabalho. Projetos, laudos, treinamentos e assessoria técnica com mais de 15 anos de experiência.
+            Soluções especializadas em Engenharia de Segurança, Engenharia Elétrica e Medicina do Trabalho. Projetos, laudos, treinamentos, assistência técnica, avaliações ambientais e exames ocupacionais com mais de 20 anos de experiência.
           </p>
 
           <div style={{display:'flex', alignItems:'center', gap:'1.5rem', flexWrap:'wrap'}}>
@@ -236,10 +236,10 @@ const StatsStrip = () => (
     padding:'2.5rem max(1.5rem, calc((100% - 1200px)/2 + 2rem))'}}>
     <div style={{display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'1.5rem'}}>
       {[
-        { val:'15+',  label:'Anos de Experiência' },
-        { val:'300+', label:'Empresas Atendidas' },
+        { val:'20+',  label:'Anos de Experiência' },
+        { val:'Brasil', label:'Atendimento Nacional' },
         { val:'100%', label:'Conformidade com NRs' },
-        { val:'20+',  label:'Tipos de Laudos e Estudos' },
+        { val:'3',  label:'Áreas Integradas' },
       ].map((s,i) => (
         <div key={i} style={{textAlign:'center', padding:'0.5rem 0'}}>
           <p style={{fontFamily:"'Barlow Condensed'", fontWeight:800, fontSize:'clamp(2rem,2.8vw,2.8rem)', color:'#6db83a', margin:0, lineHeight:1}}>{s.val}</p>
@@ -259,9 +259,9 @@ const AboutSection = ({ theme, onNavigate }) => {
   const border   = th(theme, 'rgba(109,184,58,0.1)', 'rgba(30,107,53,0.12)');
 
   const items = [
-    { n:'1', title:'Expertise Técnica', desc:'Mais de 15 anos aplicando NRs e legislação trabalhista com precisão e rigor técnico.' },
-    { n:'2', title:'Equipe Multidisciplinar', desc:'Profissionais de diversas áreas oferecendo soluções completas de engenharia.' },
-    { n:'3', title:'Responsabilidade Comprovada', desc:'Comprometidos com a segurança dos trabalhadores e a conformidade plena das empresas.' },
+    { n:'1', title:'Expertise Técnica', desc:'Mais de 20 anos aplicando NRs, legislação do INSS e normas técnicas com precisão e rigor.' },
+    { n:'2', title:'Equipe Multidisciplinar', desc:'Profissionais de Engenharia, Segurança e Medicina do Trabalho oferecendo soluções integradas.' },
+    { n:'3', title:'Atendimento Nacional', desc:'Atuação em todo o território nacional com ampla rede de profissionais especializados.' },
   ];
 
   return (
@@ -274,10 +274,10 @@ const AboutSection = ({ theme, onNavigate }) => {
             Confiabilidade e segurança em cada projeto
           </h2>
           <p style={{fontFamily:"'Barlow'", color:ts, fontSize:'0.97rem', lineHeight:1.8, margin:'0 0 1.1rem'}}>
-            A ALR – Soluções em Engenharia atua no ramo de Segurança do Trabalho e Engenharia Elétrica, especializada em Projetos, Estudos, Laudos, Treinamentos e Assistência Técnica em Perícias (trabalhistas e previdenciárias) e Avaliações Ambientais.
+            A ALR – Soluções em Engenharia, Segurança e Medicina do Trabalho atua em Engenharia de Segurança, Engenharia Elétrica e Medicina do Trabalho, especializada em projetos, laudos, treinamentos, assistência técnica em perícias e avaliações ambientais.
           </p>
           <p style={{fontFamily:"'Barlow'", color:ts, fontSize:'0.97rem', lineHeight:1.8, margin:'0 0 2.5rem'}}>
-            Aplicamos as NRs, legislação do INSS e Normas Técnicas Nacionais e Internacionais com excelência, garantindo a qualidade dos serviços e a satisfação de cada cliente.
+            Um dos pilares principais são os exames médicos ocupacionais. Aplicamos as NRs, legislação do INSS e normas técnicas nacionais e internacionais, garantindo qualidade, segurança e satisfação do cliente.
           </p>
           <Btn onClick={() => onNavigate('sobre')}>Conheça nossa história →</Btn>
         </div>
@@ -329,10 +329,10 @@ const ServicesSection = ({ theme, onNavigate }) => {
   const services = [
     { nr:'NR-01', title:'Ordem de Serviço', desc:'Elaboração e gestão de ordens de serviço conforme regulamentação vigente.' },
     { nr:'NR-01', title:'PGR', desc:'Programa de Gerenciamento de Riscos para identificação e controle de riscos ocupacionais.' },
-    { nr:'NR-06', title:'Gestão de EPIs', desc:'Controle, seleção e gestão de Equipamentos de Proteção Individual.' },
+    { nr:'NR-07', title:'PCMSO e Exames Ocupacionais', desc:'Programa médico ocupacional, exames admissionais, mudança de risco, retorno ao trabalho, demissionais e complementares.' },
     { nr:'NR-10', title:'Prontuário Elétrico', desc:'Elaboração do Prontuário das Instalações Elétricas com documentação técnica completa.' },
     { nr:'NR-12', title:'Riscos em Máquinas', desc:'Apreciação de riscos de máquinas e equipamentos com laudos técnicos.' },
-    { nr:'NR-15/16', title:'Laudo de Insalubridade', desc:'Laudos de insalubridade e periculosidade para conformidade legal das empresas.' },
+    { nr:'eSocial', title:'Gestão de Eventos', desc:'Gestão dos eventos S-2210, S-2220, S-2221 e S-2240 para obrigações de SST e medicina ocupacional.' },
   ];
   return (
     <section style={{background:bg, padding:'6rem max(1.5rem, calc((100% - 1200px)/2 + 2rem))'}}>
@@ -387,17 +387,22 @@ const ServiceCategoriesSection = ({ theme, onNavigate }) => {
   const bg = th(theme, '#0f2314', '#e8f2e8');
   return (
     <section style={{background:bg, padding:'6rem max(1.5rem, calc((100% - 1200px)/2 + 2rem))'}}>
-      <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'2rem'}}>
+      <div style={{display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'2rem'}}>
         <ServiceCatCard theme={theme} onNavigate={onNavigate}
           tag="Segurança do Trabalho"
           title="Engenharia de Segurança do Trabalho"
-          desc="Análises de risco, laudos, gestão de EPIs, PGR, PCMSO e suporte técnico completo para conformidade com as NRs."
+          desc="PGR, CIPA, laudos, ergonomia, construção civil, inflamáveis, trabalho rural, espaços confinados, altura, frigoríficos, LTCAT, perícias e avaliações ambientais."
           imgLabel="foto: equipamentos de segurança / trabalhadores com EPIs"/>
         <ServiceCatCard theme={theme} onNavigate={onNavigate}
           tag="Engenharia Elétrica"
           title="Serviços de Engenharia Elétrica"
-          desc="Projetos elétricos, prontuários de instalações, laudos técnicos e assessoria para sistemas industriais e comerciais."
+          desc="Projetos, inspeções, PIE, aterramento elétrico, SPDA, continuidade, adequação de máquinas e proteções elétricas conforme normas aplicáveis."
           imgLabel="foto: painel elétrico / instalação industrial"/>
+        <ServiceCatCard theme={theme} onNavigate={onNavigate}
+          tag="Medicina do Trabalho"
+          title="Serviços de Medicina do Trabalho"
+          desc="PCMSO, exames admissionais, mudança de risco, retorno ao trabalho, demissionais, complementares e gestão dos eventos do eSocial."
+          imgLabel="foto: atendimento ocupacional / exames médicos"/>
       </div>
     </section>
   );
@@ -450,7 +455,7 @@ const ClientsSection = ({ theme }) => {
         <SectionLabel centered>Clientes</SectionLabel>
         <h2 style={{fontFamily:"'Barlow Condensed'", fontWeight:800, fontSize:'clamp(2rem,2.8vw,2.75rem)', color:tp, margin:'0 0 0.9rem'}}>Parceria de valor</h2>
         <p style={{fontFamily:"'Barlow'", color:ts, fontSize:'0.97rem', maxWidth:500, margin:'0 auto'}}>
-          Trabalho técnico com base na legislação pertinente, trazendo segurança, confiança e agregando valor às empresas parceiras.
+          Trabalho técnico com base na legislação pertinente, atendimento presencial quando necessário e soluções inovadoras para empresas em todo o território nacional.
         </p>
       </div>
       <div style={{display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:'1.25rem'}}>
