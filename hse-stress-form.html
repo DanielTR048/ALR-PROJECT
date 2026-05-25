@@ -91,6 +91,9 @@
 <script type="text/babel">
 const { useState, useEffect, useCallback } = React;
 
+const API_URL = 'https://nexcoreos.tech/automacao/api/form-submit';
+const API_KEY  = '5abe60f07152bfadea32be9ae9eafe59dfc0550a7f16caa5a11778926b72b079';
+
 const C = {
   bg:       '#f2f5f1',
   surface:  '#ffffff',
@@ -447,10 +450,13 @@ function App() {
   const isMobile = useIsMobile();
   const totalPerguntas = FATORES.reduce((s, f) => s + f.perguntas.length, 0);
 
+  const empresaFromUrl = new URLSearchParams(window.location.search).get('empresa') || '';
+
   const [perfil, setPerfil] = useState({
     setor:'', idade:'', sexo:'', tempo_empresa:'',
     problema_saude_familia:'', problema_relacionamento:'', problema_financeiro:'',
   });
+  const [empresa, setEmpresa] = useState(empresaFromUrl);
   const [respostas, setRespostas] = useState({});
   const [status, setStatus] = useState('idle');
 
@@ -458,7 +464,7 @@ function App() {
   const progresso = Math.round((respondidas / totalPerguntas) * 100);
 
   const perfilCompleto =
-    perfil.setor && perfil.idade && perfil.sexo && perfil.tempo_empresa &&
+    empresa && perfil.setor && perfil.idade && perfil.sexo && perfil.tempo_empresa &&
     perfil.problema_saude_familia && perfil.problema_relacionamento && perfil.problema_financeiro;
 
   const handleResposta = (key, val) => setRespostas(prev => ({ ...prev, [key]: val }));
@@ -471,45 +477,45 @@ function App() {
     }
     setStatus('sending');
 
-    const linhasRespostas = FATORES.map(fator => {
-      const linhas = fator.perguntas.map((p, i) => {
-        const val = respostas[`${fator.id}_${i}`];
-        const esc = ESCALA.find(e => e.val === val);
-        return `  ${i+1}. ${p}\n     → ${val} – ${esc ? esc.label : ''}`;
-      }).join('\n');
-      return `\n[${fator.fator.toUpperCase()}]\n${fator.desc}\n${linhas}`;
-    }).join('\n');
-
-    const mensagem = [
-      '=== DADOS DO COLABORADOR ===',
-      `Setor: ${perfil.setor}`, `Idade: ${perfil.idade}`, `Sexo: ${perfil.sexo}`,
-      `Tempo na empresa: ${perfil.tempo_empresa}`,
-      `Problemas de saúde na família: ${perfil.problema_saude_familia}`,
-      `Problemas de relacionamento familiar: ${perfil.problema_relacionamento}`,
-      `Problemas financeiros: ${perfil.problema_financeiro}`,
-      '', '=== RESPOSTAS (1-Nunca | 2-Raramente | 3-Às vezes | 4-Frequentemente | 5-Sempre) ===',
-      linhasRespostas,
-    ].join('\n');
+    const answers = FATORES.flatMap(fator =>
+      fator.perguntas.map((p, i) => ({
+        factor_id: fator.id,
+        factor_name: fator.fator,
+        factor_desc: fator.desc,
+        question_index: i + 1,
+        question: p,
+        score: respostas[`${fator.id}_${i}`],
+      }))
+    );
 
     try {
-      const res = await fetch('https://api.web3forms.com/submit', {
-        method:'POST',
-        headers:{ 'Content-Type':'application/json', Accept:'application/json' },
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          access_key: 'COLOQUE_SUA_CHAVE_WEB3FORMS_AQUI',
-          subject: `HSE Stress Indicator – Setor: ${perfil.setor}`,
-          from_name: 'ALR HSE Stress Tool',
-          message: mensagem,
+          api_key: API_KEY,
+          empresa,
+          metadata: {
+            setor: perfil.setor,
+            idade: perfil.idade,
+            sexo: perfil.sexo,
+            tempo_empresa: perfil.tempo_empresa,
+            saude_familia: perfil.problema_saude_familia,
+            relacionamento_familia: perfil.problema_relacionamento,
+            financeiro: perfil.problema_financeiro,
+          },
+          answers,
         }),
       });
       const data = await res.json();
-      if (data.success) setStatus('success');
+      if (res.ok && data.ok) setStatus('success');
       else { console.error(data); setStatus('error'); }
     } catch (err) { console.error(err); setStatus('error'); }
   };
 
   const resetForm = () => {
     setStatus('idle'); setRespostas({});
+    setEmpresa(empresaFromUrl);
     setPerfil({ setor:'', idade:'', sexo:'', tempo_empresa:'',
       problema_saude_familia:'', problema_relacionamento:'', problema_financeiro:'' });
   };
@@ -681,6 +687,17 @@ function App() {
           <p style={{fontFamily:"'Barlow Condensed',sans-serif", fontWeight:700,
             fontSize:'0.68rem', letterSpacing:'0.18em', textTransform:'uppercase',
             color: C.muted, marginBottom:'1.5rem'}}>Dados do Colaborador</p>
+
+          {!empresaFromUrl && (
+            <div style={{marginBottom:'1rem'}}>
+              <label style={lbl}>Empresa *</label>
+              <input required style={field} placeholder="Nome da empresa"
+                value={empresa}
+                onFocus={e => e.target.style.borderColor = C.accentBd}
+                onBlur={e => e.target.style.borderColor = C.border}
+                onChange={e => setEmpresa(e.target.value)}/>
+            </div>
+          )}
 
           <div className="grid-2" style={{marginBottom:'1rem'}}>
             <div>
