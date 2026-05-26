@@ -459,13 +459,13 @@ function App() {
   const [empresa, setEmpresa] = useState(empresaFromUrl);
   const [respostas, setRespostas] = useState({});
   const [status, setStatus] = useState('idle');
+  const [consentimentoLgpd, setConsentimentoLgpd] = useState(false);
 
   const respondidas = Object.keys(respostas).length;
   const progresso = Math.round((respondidas / totalPerguntas) * 100);
 
   const perfilCompleto =
-    empresa && perfil.setor && perfil.idade && perfil.sexo && perfil.tempo_empresa &&
-    perfil.problema_saude_familia && perfil.problema_relacionamento && perfil.problema_financeiro;
+    empresa && perfil.setor && perfil.idade && perfil.sexo && perfil.tempo_empresa && consentimentoLgpd;
 
   const handleResposta = (key, val) => setRespostas(prev => ({ ...prev, [key]: val }));
 
@@ -500,6 +500,7 @@ function App() {
             idade: perfil.idade,
             sexo: perfil.sexo,
             tempo_empresa: perfil.tempo_empresa,
+            consentimento_lgpd: consentimentoLgpd,
             saude_familia: perfil.problema_saude_familia,
             relacionamento_familia: perfil.problema_relacionamento,
             financeiro: perfil.problema_financeiro,
@@ -516,6 +517,7 @@ function App() {
   const resetForm = () => {
     setStatus('idle'); setRespostas({});
     setEmpresa(empresaFromUrl);
+    setConsentimentoLgpd(false);
     setPerfil({ setor:'', idade:'', sexo:'', tempo_empresa:'',
       problema_saude_familia:'', problema_relacionamento:'', problema_financeiro:'' });
   };
@@ -677,6 +679,35 @@ function App() {
 
       <form onSubmit={handleSubmit} style={{padding:`2.5rem ${pad} 5rem`}}>
 
+        {/* ── Consentimento LGPD ── */}
+        <div style={{
+          background: C.surface, border:`1px solid ${C.accentBd}`,
+          borderTop:`3px solid ${C.accent}`, borderRadius:10,
+          padding: isMobile ? '1.25rem' : '1.75rem', marginBottom:'2rem',
+          boxShadow:'0 2px 12px rgba(0,0,0,0.06)',
+        }}>
+          <p style={{fontFamily:"'Barlow Condensed',sans-serif", fontWeight:700,
+            fontSize:'0.68rem', letterSpacing:'0.18em', textTransform:'uppercase',
+            color: C.muted, marginBottom:'0.85rem'}}>Termo de Consentimento e Sigilo (LGPD)</p>
+          <p style={{fontSize:'0.86rem', color: C.muted, lineHeight:1.7, margin:'0 0 1rem'}}>
+            Os dados aqui informados serão tratados exclusivamente para fins de cumprimento da NR-1
+            (identificação dos FRPRT), de forma anônima e agregada. Base legal: Art. 7º, II e
+            Art. 11, II, "a" da Lei nº 13.709/2018 (LGPD). A Empresa garante que as respostas
+            NÃO serão utilizadas para fins disciplinares, de avaliação individual ou de retaliação.
+            A participação é voluntária e seu sigilo é assegurado.
+          </p>
+          <label style={{
+            display:'flex', alignItems:'flex-start', gap:'0.65rem', cursor:'pointer',
+            color: C.muted, fontSize:'0.84rem', lineHeight:1.5,
+          }}>
+            <input type="checkbox" required
+              checked={consentimentoLgpd}
+              onChange={e => setConsentimentoLgpd(e.target.checked)}
+              style={{marginTop:'0.2rem', accentColor:C.accent}}/>
+            <span>Li e estou ciente do termo de consentimento e sigilo.</span>
+          </label>
+        </div>
+
         {/* ── Perfil ── */}
         <div style={{
           background: C.surface, border:`1px solid ${C.border}`,
@@ -745,18 +776,18 @@ function App() {
             borderRadius:8, padding:'0.85rem 1rem', marginBottom:'1.25rem',
           }}>
             <p style={{fontSize:'0.8rem', color: C.subtle, lineHeight:1.6, margin:0}}>
-              As questões abaixo são apenas para contextualização estatística e não influenciam sua avaliação profissional.
+              As questões abaixo são opcionais, apenas para contextualização estatística e não influenciam sua avaliação profissional.
             </p>
           </div>
 
           <div className="grid-3">
             {[
-              { key:'problema_saude_familia',  label:'Problemas de saúde na família?' },
-              { key:'problema_relacionamento', label:'Problemas de relacionamento familiar?' },
-              { key:'problema_financeiro',     label:'Problemas financeiros?' },
+              { key:'problema_saude_familia',  label:'Atualmente está passando por problemas de saúde na família?' },
+              { key:'problema_relacionamento', label:'Atualmente está passando por problemas de relacionamentos na família?' },
+              { key:'problema_financeiro',     label:'Está passando por problemas financeiros?' },
             ].map(({ key, label }) => (
               <div key={key}>
-                <label style={{...lbl, marginBottom:'0.6rem'}}>{label} *</label>
+                <label style={{...lbl, marginBottom:'0.6rem'}}>{label} <span style={{color:C.subtle, fontWeight:500}}>(opcional)</span></label>
                 <RadioGroup fieldKey={key} options={['Sim','Não']}/>
               </div>
             ))}
@@ -764,6 +795,18 @@ function App() {
         </div>
 
         {/* ── Perguntas ── */}
+        <div style={{
+          background: C.raised, border:`1px solid ${C.border}`,
+          borderLeft:`3px solid rgba(109,184,58,0.4)`,
+          borderRadius:8, padding:'0.9rem 1rem', margin:'0 0 1.35rem',
+        }}>
+          <p style={{fontSize:'0.82rem', color: C.muted, lineHeight:1.65, margin:0}}>
+            Este questionário tem como objetivo avaliar as questões relativas ao ambiente de trabalho,
+            não podendo ser respondido com base na sua relação familiar ou outros motivos que não fazem
+            parte da relação entre Empresa e Trabalhador.
+          </p>
+        </div>
+
         <p style={{fontFamily:"'Barlow Condensed',sans-serif", fontWeight:700,
           fontSize:'0.68rem', letterSpacing:'0.18em', textTransform:'uppercase',
           color: C.muted, margin:'0 0 1.15rem'}}>
