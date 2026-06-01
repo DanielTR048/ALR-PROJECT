@@ -2,20 +2,25 @@
 
 const { useState, useEffect } = React;
 
-// ─── Logo SVG ─────────────────────────────────────────────────────────────────
-const ALRLogo = ({ height = 48, textColor = '#e8f2e8' }) => (
-  <svg height={height} viewBox="0 0 175 54" fill="none" xmlns="http://www.w3.org/2000/svg" style={{display:'block',flexShrink:0}}>
-    {/* 2×3 grid — lime + dark green checkerboard */}
-    <rect x="0"  y="0"  width="15" height="15" rx="2.5" fill="#6db83a"/>
-    <rect x="19" y="0"  width="15" height="15" rx="2.5" fill="#1e6b35"/>
-    <rect x="0"  y="19" width="15" height="15" rx="2.5" fill="#1e6b35"/>
-    <rect x="19" y="19" width="15" height="15" rx="2.5" fill="#6db83a"/>
-    <rect x="0"  y="38" width="15" height="15" rx="2.5" fill="#6db83a"/>
-    <rect x="19" y="38" width="15" height="15" rx="2.5" fill="#1e6b35"/>
-    {/* ALR lettering */}
-    <text x="42" y="50" fontFamily="'Barlow Condensed',sans-serif" fontWeight="800" fontSize="50" fill={textColor}>ALR</text>
-  </svg>
-);
+// ─── Logo ─────────────────────────────────────────────────────────────────────
+const ALRLogo = ({ height = 48, textColor = '#e8f2e8' }) => {
+  const assetBase = (window.ALR_PAGE_URLS && window.ALR_PAGE_URLS.home) || './';
+  const displayHeight = height * 1.35;
+  return (
+    <img
+      src={`${assetBase}ALR_logo.png`}
+      alt="ALR Solucoes em Engenharia"
+      style={{
+        display:'block',
+        height:displayHeight,
+        width:'auto',
+        maxWidth:'min(52vw, 230px)',
+        objectFit:'contain',
+        flexShrink:0,
+      }}
+    />
+  );
+};
 
 // ─── Button ───────────────────────────────────────────────────────────────────
 const Btn = ({ children, variant = 'primary', size = 'md', onClick, style: extra = {}, type = 'button' }) => {
@@ -91,9 +96,9 @@ const NavBar = ({ currentPage, onNavigate }) => {
 
   return (
     <nav style={{
-      position:'fixed', top:0, left:0, right:0, zIndex:1000, height:72,
+      position:'fixed', top:0, left:0, right:0, zIndex:1000, height:88,
       display:'flex', alignItems:'center', justifyContent:'space-between',
-      padding:'0 max(1.5rem, calc((100% - 1200px)/2 + 2rem))',
+      padding:'14px max(1.5rem, calc((100% - 1200px)/2 + 2rem)) 0',
       background: scrolled ? 'rgba(8,15,9,0.94)' : 'transparent',
       backdropFilter: scrolled ? 'blur(16px)' : 'none',
       boxShadow: scrolled ? '0 1px 0 rgba(109,184,58,0.12)' : 'none',

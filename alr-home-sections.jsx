@@ -37,14 +37,17 @@ const HeroSection = ({ heroLayout, onNavigate }) => {
 
       {/* ALR — emerge da direita com máscara de gradiente */}
       <div aria-hidden="true" style={{
-        position:'absolute', right:'-2%', top:'50%', transform:'translateY(-48%)',
+        position:'absolute', right:'-4%', top:'50%', transform:'translateY(-48%)',
         fontFamily:"'Barlow Condensed',sans-serif", fontWeight:800,
         fontSize:'clamp(22rem, 42vw, 52rem)',
-        lineHeight:1, letterSpacing:'-0.03em',
-        color:'rgba(27,74,12,0.07)',
-        WebkitTextStroke:'2px rgba(27,74,12,0.22)',
-        WebkitMaskImage:'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 35%, rgba(0,0,0,1) 70%)',
-        maskImage:'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 35%, rgba(0,0,0,1) 70%)',
+        lineHeight:1, letterSpacing:0,
+        color:'rgba(2,50,29,0.68)',
+        WebkitTextStroke:'2px rgba(2,50,29,0.78)',
+        mixBlendMode:'normal',
+        filter:'none',
+        textShadow:'0 24px 70px rgba(2,50,29,0.2)',
+        WebkitMaskImage:'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.28) 28%, rgba(0,0,0,0.78) 62%, rgba(0,0,0,0.95) 100%)',
+        maskImage:'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.28) 28%, rgba(0,0,0,0.78) 62%, rgba(0,0,0,0.95) 100%)',
         pointerEvents:'none', userSelect:'none', whiteSpace:'nowrap',
         zIndex:0,
       }}>ALR</div>
@@ -58,7 +61,7 @@ const HeroSection = ({ heroLayout, onNavigate }) => {
       {/* Conteúdo */}
       <div style={{
         position:'relative', zIndex:2,
-        paddingTop: isSplit ? 'calc(72px + 3.5rem)' : 'calc(72px + 5rem)',
+        paddingTop: isSplit ? 'calc(88px + 3.5rem)' : 'calc(88px + 5rem)',
         paddingBottom: isSplit ? '5.5rem' : '6rem',
         paddingLeft:'max(1.5rem, calc((100% - 1200px)/2 + 2rem))',
         paddingRight:'max(1.5rem, calc((100% - 1200px)/2 + 2rem))',
