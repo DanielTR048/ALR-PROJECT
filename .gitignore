@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.build/
+tmp/
+output/
+auditoria/
+assets/photos/*
+!assets/photos/alr-seguranca-v4-*.webp
+!assets/photos/alr-eletrica-v2-*.webp
+!assets/photos/alr-medicina-v4-*.webp
+.env
+.env.*
+!.env.example
