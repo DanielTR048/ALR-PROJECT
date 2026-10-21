@@ -813,3 +813,9 @@
     gap: 8px;
   }
 }
+
+/* Equipe à direita; recorte vertical mantém rostos e tablet nas telas largas. */
+.hero-photo img { object-position: 76% 55%; }
+@media (max-width: 850px) {
+  .hero-photo img { object-position: 76% top; }
+}

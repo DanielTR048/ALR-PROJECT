@@ -123,3 +123,19 @@ Veja a comparação visual em `output/revisao/index.html` e navegue pela prévia
 - Formulário da Home com menos texto introdutório, mensagem inicial de três linhas e contatos adicionais depois dos campos no celular. Campos, validação, revisão e confirmação no WhatsApp preservados.
 - Comparação em 390 px de largura: altura da Home de 7.010 para 4.784 px (cerca de 32% menor); início do formulário de 4.580 para 2.804 px (cerca de 39% mais próximo do topo). Medições de layout, sem afirmação de ganho real de conversão.
 - Compilação, dois testes de composição de mensagem, 25 combinações de página/largura e fluxo do formulário em celular/desktop aprovados. Nenhuma mensagem externa enviada.
+
+## Rodada 07 — hero aprovada, preparada localmente
+
+- Foto escolhida e editada aplicada à abertura da Home, com recortes responsivos e quatro versões WebP. Imagens dos cartões e demais páginas preservadas.
+- Removido “Conheça os serviços” da abertura; permanece “Converse com a ALR”. Em 390 px, a hero passa de aproximadamente 607 para 553 px de altura.
+- Compilação, dois testes de mensagem e verificação da hero em 390, 850, 1440 e 1920 px aprovados: imagem carregada, um CTA principal e ausência de rolagem horizontal.
+- Publicação da foto aguardando confirmação de licença comercial ou indicação específica de domínio público; detalhes em `IMAGENS.md`.
+
+## Rodada 08 — hero com foto Pexels editada
+
+- Substituída a imagem v5 pela edição v7 da fotografia de Sergey Sergeev (Pexels 32845690), a pedido do usuário: três pessoas mais ao fundo e à direita, uniformes cinza, logos ALR discretas e capacetes sem as marcas anteriores.
+- Quatro variantes WebP, carregamento prioritário e enquadramento responsivo. Cartões e outras páginas preservados; permanece um único CTA na abertura.
+- Origem, licença e edição documentadas em `IMAGENS.md`; original, prompt e manifesto mantidos em `output/imagegen/hero-alr-v7/`.
+- Aplicação local para revisão do usuário, sem publicação.
+- Build e conferência da abertura em 390, 850, 1440 e 1920 px: imagem carregada, sem erros de JavaScript, sem rolagem horizontal e com um CTA principal. Inspeção visual dos recortes em celular e desktop.
+- Publicação desta versão aprovada pelo usuário em 21/10/2026. Envio à branch principal `master`, integrada ao Cloudflare Pages; dois testes de mensagem aprovados.

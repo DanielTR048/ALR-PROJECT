@@ -8,6 +8,7 @@ assets/photos/*
 !assets/photos/alr-seguranca-v4-*.webp
 !assets/photos/alr-eletrica-v2-*.webp
 !assets/photos/alr-medicina-v4-*.webp
+!assets/photos/alr-hero-v7-*.webp
 .env
 .env.*
 !.env.example

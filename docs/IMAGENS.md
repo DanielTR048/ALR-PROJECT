@@ -1,5 +1,19 @@
 # Imagens da prévia ALR — 21/10/2026
 
+## Hero v7 — edição de foto Pexels, aprovada para publicação
+
+Origem: [Industrial Engineers Collaborating in Factory, Sergey Sergeev](https://www.pexels.com/photo/industrial-engineers-collaborating-in-factory-32845690/), original 4200 × 2794 px. Licença [Pexels](https://www.pexels.com/license/), consultada em 21/10/2026: uso gratuito em sites comerciais e edição permitidos, sem atribuição obrigatória; não insinuar endosso das pessoas retratadas. A imagem é uma composição ilustrativa, não um registro da equipe real da ALR.
+
+A pedido do usuário, a ferramenta integrada de imagens abriu o enquadramento, posicionou as três pessoas mais ao fundo e à direita, trocou os uniformes azuis por cinza e aplicou pequenas logos ALR no peito. Capacetes sem as marcas anteriores. Saída nativa 1672 × 941 px, sem ampliação artificial, com quatro variantes WebP em 480, 960, 1600 e 1672 px. Original, prompt e manifesto em `output/imagegen/hero-alr-v7/`. Componente e build usam exclusivamente v7 para a hero; v5 e v6 ficam como rascunhos locais, sem referência na página atual. Publicação aprovada pelo usuário em 21/10/2026.
+
+## Histórico: hero v5 — substituída, não publicar sem licença
+
+A imagem anterior foi integrada somente à abertura da Home na rodada 07 e depois substituída pela v7. Os arquivos v5 permanecem somente como rascunhos locais ignorados pelo Git.
+
+Origem: [foto 5XOd2G de Aleksei Gorodenkov](https://thenounproject.com/photo/photo-5XOd2G/). Em 21/10/2026, a página informa “Royalty-Free Photo”, sem indicação de Public Domain no conteúdo consultado. A [documentação do banco](https://help.thenounproject.com/hc/en-us/articles/360055426293-What-licenses-do-you-offer-for-photos) diferencia a licença gratuita CC BY-NC-ND, a licença comercial adquirida e fotos especificamente designadas como domínio público. A confirmação do usuário sobre a licença desta foto está pendente; não registrar como domínio público sem essa evidência.
+
+Edição feita com a ferramenta integrada de imagens: reenquadramento, uniforme verde e aplicação discreta da marca. Original editado de 1672 × 941 px e prompt em `output/imagegen/hero-alr-v5/`. Versões WebP sem ampliação artificial, qualidade 86; arquivos de 960 e 1600 px medem 85.524 e 159.246 bytes. A imagem é ilustrativa e não documenta a equipe real da ALR.
+
 ## Versão atual — cenas ALR e composição integrada
 
 As fotografias de banco descritas no histórico abaixo foram substituídas no site por três cenas ilustrativas geradas com a ferramenta integrada de imagens do GPT, usando `assets/alr-logo.webp` como referência. Não houve uso de CLI ou API com chave. Pessoas, ambientes e situações são fictícios; não documentam equipe, clínica ou serviço real da ALR. Por solicitação do usuário, as legendas sobrepostas foram removidas na rodada 06. As descrições alternativas acessíveis continuam identificando as ilustrações.

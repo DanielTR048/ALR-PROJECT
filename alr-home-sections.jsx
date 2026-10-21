@@ -43,11 +43,11 @@ export function HomePage({ base }) {
     <>
       <section className="hero">
         <WorkPhoto
-          name="seguranca"
+          name="hero"
           base={base}
           className="hero-photo"
           priority
-          sizes="(max-width: 540px) 660px, (max-width: 850px) 820px, 100vw"
+          sizes="(max-width: 600px) 520px, (max-width: 850px) 820px, 100vw"
         />
         <div className="container hero-grid">
           <div className="hero-copy">
@@ -70,9 +70,6 @@ export function HomePage({ base }) {
               <Btn href="#solicitar">
                 Converse com a ALR <span aria-hidden="true">↗</span>
               </Btn>
-              <a className="text-link" href={urls.servicos}>
-                Conheça os serviços <span aria-hidden="true">→</span>
-              </a>
             </div>
           </div>
         </div>

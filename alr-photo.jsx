@@ -1,6 +1,13 @@
 import React from "react";
 
 const PHOTOS = {
+  hero: {
+    version: 7,
+    alt: "Fotografia ilustrativa editada com IA: três profissionais com capacetes e uniformes cinza consultam um tablet em uma fábrica.",
+    width: 1672,
+    height: 941,
+    widths: [480, 960, 1600, 1672],
+  },
   seguranca: {
     version: 4,
     alt: "Cena ilustrativa criada por IA: profissionais com uniformes verdes e capacetes brancos consultam uma prancheta em uma instalação industrial.",
@@ -33,7 +40,7 @@ export function WorkPhoto({
     <figure className={`work-photo work-photo--${name} ${className}`}>
       <img
         src={`${base}assets/photos/alr-${name}-v${photo.version}-960.webp`}
-        srcSet={[480, 960, 1600]
+        srcSet={(photo.widths || [480, 960, 1600])
           .map(
             (width) =>
               `${base}assets/photos/alr-${name}-v${photo.version}-${width}.webp ${width}w`,

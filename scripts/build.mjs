@@ -9,8 +9,8 @@ const out = path.join(root, "dist");
 await mkdir(path.join(out, "assets"), { recursive: true });
 await mkdir(path.join(root, ".build"), { recursive: true });
 await mkdir(path.join(out, "assets/photos"), { recursive: true });
-for (const photo of ["alr-seguranca-v4", "alr-eletrica-v2", "alr-medicina-v4"]) {
-  for (const width of [480, 960, 1600]) {
+for (const photo of ["alr-seguranca-v4", "alr-eletrica-v2", "alr-medicina-v4", "alr-hero-v7"]) {
+  for (const width of photo === "alr-hero-v7" ? [480, 960, 1600, 1672] : [480, 960, 1600]) {
     const filename = `${photo}-${width}.webp`;
     await copyFile(path.join(root, "assets/photos", filename), path.join(out, "assets/photos", filename));
   }
