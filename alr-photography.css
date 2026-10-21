@@ -483,8 +483,35 @@
   font-size: clamp(3.65rem, 5vw, 4.5rem);
 }
 .areas-section {
-  padding-bottom: 96px;
+  padding-bottom: 32px;
   background: #edf3e9;
+}
+.home-about {
+  background: #edf3e9;
+  padding-bottom: 80px;
+}
+.home-about-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+  padding: 40px;
+  border: 1px solid #dfe9d9;
+  border-left: 4px solid var(--green);
+  border-radius: 14px;
+  background: #fff;
+}
+.home-about-panel h2 {
+  color: var(--forest);
+  font-size: clamp(2rem, 3vw, 2.7rem);
+  max-width: 430px;
+}
+.home-about-panel .eyebrow {
+  margin-bottom: 14px;
+}
+.home-about-copy .text-link {
+  margin-top: 20px;
+  min-height: 44px;
 }
 .area-cards {
   display: grid;
@@ -580,9 +607,15 @@
 .home-contact-layout {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.15fr);
-  gap: 80px;
+  grid-template-areas: "copy form" "destination form";
+  grid-template-rows: auto 1fr;
+  gap: 28px 80px;
   align-items: start;
 }
+.home-contact-copy { grid-area: copy; }
+.home-contact-layout .contact-form-panel { grid-area: form; }
+.home-contact-layout .home-contact-destination { grid-area: destination; margin-top: 0; }
+.home-contact-layout .contact-form > .small-note { margin-top: 0; }
 .home-contact-copy h2 {
   font-size: 3.1rem;
   margin-bottom: 28px;
@@ -662,7 +695,7 @@
 }
 @media (max-width: 850px) {
   .areas-section {
-    padding-bottom: 64px;
+    padding-bottom: 24px;
   }
   .area-cards {
     grid-template-columns: 1fr;
@@ -686,6 +719,8 @@
   }
   .home-contact-layout {
     grid-template-columns: 1fr;
+    grid-template-areas: "copy" "form" "destination";
+    grid-template-rows: auto;
     gap: 34px;
   }
   .home-contact-copy h2 {
@@ -698,21 +733,79 @@
     margin-top: 28px;
   }
 }
+
+/* Leitura direta no celular: espaços menores e detalhes no catálogo de serviços. */
+@media (max-width: 850px) {
+  .home-about { padding-bottom: 48px; }
+  .home-about-panel { grid-template-columns: 1fr; gap: 18px; padding: 28px; }
+}
+@media (max-width: 600px) {
+  .section { padding-block: 40px; }
+  .eyebrow { margin-bottom: 14px; }
+  .section-heading { margin-bottom: 24px; }
+  .section-heading > p { margin-top: 14px; }
+  .hero-grid { padding-block: 180px 28px; min-height: 0; }
+  .hero .hero-photo { height: 290px; }
+  .hero h1 { font-size: clamp(2.1rem, 9.8vw, 3rem); line-height: 1; }
+  .hero-description { margin-top: 18px; line-height: 1.55; }
+  .hero-actions { margin-top: 22px; gap: 10px 20px; flex-direction: row; flex-wrap: wrap; align-items: center; }
+  .hero-actions .button { min-height: 48px; padding: 12px 18px; }
+  .hero-actions .text-link { min-height: 44px; padding-block: 8px; }
+  .hero-footnote { display: none; }
+  .areas-section { padding-bottom: 20px; }
+  .area-cards { gap: 18px; }
+  .area-card .card-photo { aspect-ratio: 2.35 / 1; }
+  .area-card .card-photo::after { display: none; }
+  .area-card-body { padding: 18px; }
+  .area-card-label { padding: 5px 9px; margin-bottom: 10px; font-size: 0.65rem; }
+  .area-card h3 { font-size: 1.6rem; margin-bottom: 8px; }
+  .area-card p { line-height: 1.5; }
+  .area-card ul { display: none; }
+  .area-card .button { margin-top: 16px; }
+  .home-about { padding-bottom: 40px; }
+  .home-about-panel { padding: 22px 20px; gap: 14px; }
+  .home-about-panel h2 { font-size: 2rem; }
+  .home-about-copy p { line-height: 1.6; }
+  .home-about-copy .text-link { margin-top: 12px; }
+  .home-contact-layout { gap: 22px; }
+  .home-contact-copy h2 { font-size: 2.15rem; margin-bottom: 14px; }
+  .home-contact-copy .lead { font-size: 1rem; line-height: 1.6; }
+  .home-contact-layout .contact-form-panel { padding: 20px 18px; }
+  .contact-form > .small-note { margin-bottom: 18px; }
+  .field { margin-bottom: 16px; }
+  .field label { margin-bottom: 6px; }
+  .privacy-note { padding-top: 14px; margin-bottom: 18px; }
+  .home-contact-destination { padding-top: 18px; }
+  .home-contact-destination > span { margin-bottom: 6px; }
+  .home-contact-destination p { margin-top: 8px; }
+  .home-contact-destination .home-contact-email { margin-top: 8px; }
+  .page-header--photo { padding-block: 170px 32px; }
+  .page-header--photo .header-photo { height: 275px; }
+  .page-header--photo .breadcrumb { margin-bottom: 18px; }
+  .service-scene .scene-content { padding-block: 28px 210px; }
+  .service-scene .scene-photo { height: 200px; }
+  .service-section { padding-block: 0 36px; }
+  .service-catalog { gap: 16px; padding-top: 24px; }
+  .editorial-grid { gap: 20px; }
+  .process-grid { gap: 18px; }
+  .process-grid li { padding-top: 18px; }
+  .step-number { margin-bottom: 10px; }
+  .cta-section { padding-block: 36px; }
+  .cta-inner { gap: 22px; }
+  .cta-inner h2 { font-size: 2rem; }
+  .cta-section p:not(.eyebrow) { margin-top: 14px; }
+  .site-footer { padding-top: 32px; padding-bottom: 70px; }
+  .footer-grid { gap: 24px; padding-bottom: 24px; }
+  .site-footer h2 { margin-bottom: 12px; }
+  .site-footer p { margin-top: 12px; }
+  .footer-grid > div:nth-child(2) ul { display: flex; flex-wrap: wrap; gap: 0 20px; }
+  .footer-grid > div:nth-child(2) a { display: inline-flex; min-height: 44px; align-items: center; }
+  .footer-grid > div:nth-child(2) li { margin: 0; }
+  .footer-bottom { padding-block: 18px; }
+}
 @media (max-width: 540px) {
-  .hero h1 {
-    font-size: clamp(2.5rem, 10.6vw, 3.7rem);
-  }
-  .area-card-body {
-    padding: 24px;
-  }
-  .home-contact-layout .contact-form-panel {
-    padding: 24px 18px;
-  }
   .home-contact-layout .contact-form h2 {
     font-size: 1.9rem;
-  }
-  .home-contact-copy h2 {
-    font-size: 2.45rem;
   }
   .home-contact-layout .contact-form > .button {
     font-size: 0.88rem;

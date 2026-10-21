@@ -115,3 +115,11 @@ Veja a comparação visual em `output/revisao/index.html` e navegue pela prévia
 - Testes dos cartões e do formulário da Home aprovados em 390 e 1440 px; cinco páginas em cinco larguras sem falhas observadas; dois testes da mensagem aprovados. Nenhum envio externo.
 - Capturas da rodada anterior preservadas em `output/revisao/rodada-04/`; novas capturas de cartões, formulário e convite em `evidencias/`.
 - Prévia local, sem publicação.
+# Rodada 06 — ajustes após publicação
+
+- Removidas as legendas sobrepostas às imagens nas cinco páginas.
+- O bloco “A ALR” da Home passou a “Sobre nós”, em painel branco integrado à seção de especialidades, com borda verde, texto mais direto e acesso à apresentação institucional.
+- No celular: abertura e fotos menores, cartões sem repetir as listas do catálogo, espaçamentos reduzidos e rodapé mais compacto. Os detalhes completos permanecem na página Serviços.
+- Formulário da Home com menos texto introdutório, mensagem inicial de três linhas e contatos adicionais depois dos campos no celular. Campos, validação, revisão e confirmação no WhatsApp preservados.
+- Comparação em 390 px de largura: altura da Home de 7.010 para 4.784 px (cerca de 32% menor); início do formulário de 4.580 para 2.804 px (cerca de 39% mais próximo do topo). Medições de layout, sem afirmação de ganho real de conversão.
+- Compilação, dois testes de composição de mensagem, 25 combinações de página/largura e fluxo do formulário em celular/desktop aprovados. Nenhuma mensagem externa enviada.

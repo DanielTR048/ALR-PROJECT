@@ -2,7 +2,7 @@
 
 ## Versão atual — cenas ALR e composição integrada
 
-As fotografias de banco descritas no histórico abaixo foram substituídas no site por três cenas ilustrativas geradas com a ferramenta integrada de imagens do GPT, usando `assets/alr-logo.webp` como referência. Não houve uso de CLI ou API com chave. Pessoas, ambientes e situações são fictícios e identificados como ilustração criada com IA; não documentam equipe, clínica ou serviço real da ALR.
+As fotografias de banco descritas no histórico abaixo foram substituídas no site por três cenas ilustrativas geradas com a ferramenta integrada de imagens do GPT, usando `assets/alr-logo.webp` como referência. Não houve uso de CLI ou API com chave. Pessoas, ambientes e situações são fictícios; não documentam equipe, clínica ou serviço real da ALR. Por solicitação do usuário, as legendas sobrepostas foram removidas na rodada 06. As descrições alternativas acessíveis continuam identificando as ilustrações.
 
 | Cena | Original final salvo no projeto | Versão aplicada |
 | --- | --- | --- |

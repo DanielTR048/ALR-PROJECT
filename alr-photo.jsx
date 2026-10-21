@@ -27,7 +27,6 @@ export function WorkPhoto({
   className = "",
   priority = false,
   sizes = "(max-width: 850px) calc(100vw - 40px), 400px",
-  caption,
 }) {
   const photo = PHOTOS[name];
   return (
@@ -48,9 +47,6 @@ export function WorkPhoto({
         fetchpriority={priority ? "high" : "auto"}
         decoding="async"
       />
-      <figcaption>
-        {caption ? `${caption} · ` : ""}Cena ilustrativa criada com IA
-      </figcaption>
     </figure>
   );
 }

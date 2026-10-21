@@ -128,32 +128,23 @@ export function HomePage({ base }) {
           ))}
         </div>
       </section>
-      <section className="section about-intro">
-        <div className="container editorial-grid">
-          <div>
-            <SectionLabel>A ALR</SectionLabel>
-            <h2>
-              O trabalho técnico
-              <br />
-              começa por entender
-              <br />a sua operação.
-            </h2>
-          </div>
-          <div>
-            <p className="lead">
-              Atuamos em Engenharia de Segurança, Engenharia Elétrica e Medicina
-              do Trabalho, reunindo diferentes especialidades para atender às
-              necessidades das empresas.
-            </p>
-            <p>
-              Projetos, laudos, treinamentos, assistência técnica e exames
-              ocupacionais fazem parte dessa atuação. O escopo de cada trabalho
-              considera as características da atividade e a necessidade
-              apresentada.
-            </p>
-            <a className="text-link" href={urls.sobre}>
-              Conheça a ALR <span aria-hidden="true">→</span>
-            </a>
+      <section className="home-about" aria-labelledby="home-about-title">
+        <div className="container">
+          <div className="home-about-panel">
+            <div>
+              <SectionLabel>Sobre nós</SectionLabel>
+              <h2 id="home-about-title">Por trás de cada projeto, atenção à sua empresa.</h2>
+            </div>
+            <div className="home-about-copy">
+              <p>
+                A ALR reúne engenharia e saúde ocupacional para cuidar das
+                pessoas e das instalações. Primeiro, entendemos sua rotina.
+                Depois, definimos o trabalho que faz sentido para ela.
+              </p>
+              <a className="text-link" href={urls.sobre}>
+                Conheça nosso trabalho <span aria-hidden="true">→</span>
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -171,15 +162,12 @@ export function HomePage({ base }) {
               precisa resolver hoje?
             </h2>
             <p className="lead">
-              Um exame admissional, um laudo, uma instalação para avaliar ou uma
-              dúvida sobre segurança. Conte com a gente para entender o que
-              precisa ser feito.
+              Precisa de um exame, um laudo ou orientação? Conte a situação.
+              Você não precisa saber o nome técnico do serviço.
             </p>
-            <p>
-              Não precisa saber o nome técnico do serviço. Descreva a situação e
-              leve sua solicitação para uma conversa com a ALR.
-            </p>
-            <div className="home-contact-destination">
+          </div>
+          <ContactForm compact />
+          <div className="home-contact-destination">
               <span>Seu contato com a nossa equipe</span>
               <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer">
                 {CONTACT.phone} <span aria-hidden="true">↗</span>
@@ -195,9 +183,7 @@ export function HomePage({ base }) {
               >
                 {CONTACT.email}
               </a>
-            </div>
           </div>
-          <ContactForm compact />
         </div>
       </section>
       <CTASection base={base} />

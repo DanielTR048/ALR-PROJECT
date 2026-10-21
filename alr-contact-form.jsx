@@ -92,14 +92,11 @@ export function ContactForm({ compact = false }) {
         </div>
       ) : (
         <form onSubmit={submit} className="contact-form">
-          <SectionLabel>Sua solicitação</SectionLabel>
-          <h2>
-            {compact ? "Como podemos ajudar você?" : "Como podemos ajudar?"}
-          </h2>
-          <p>
-            Conte um pouco sobre sua necessidade. Depois, revise a mensagem e
-            continue a conversa no WhatsApp.
-          </p>
+          {!compact && <>
+            <SectionLabel>Sua solicitação</SectionLabel>
+            <h2>Como podemos ajudar?</h2>
+            <p>Conte sua necessidade e continue a conversa no WhatsApp.</p>
+          </>}
           <p className="small-note">Campos marcados com * são obrigatórios.</p>
           <div className="form-grid">
             <div className="field">
@@ -167,7 +164,7 @@ export function ContactForm({ compact = false }) {
             <textarea
               id="contact-message"
               name="message"
-              rows={5}
+              rows={compact ? 3 : 5}
               required
               minLength={10}
               maxLength={1600}
@@ -175,9 +172,8 @@ export function ContactForm({ compact = false }) {
               {...bind("message")}
             />
             <p className="field-hint" id="message-hint">
-              Por exemplo: “Tenho uma loja em Rio Preto e preciso de exame
-              admissional para dois funcionários.” Não inclua dados de saúde ou
-              informações confidenciais.
+              {compact ? "Ex.: exame admissional para dois funcionários. " : "Descreva o serviço e a situação da empresa. "}
+              Não inclua informações confidenciais ou de saúde.
             </p>
           </div>
           <p className="privacy-note">
