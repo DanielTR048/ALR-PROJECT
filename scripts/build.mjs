@@ -46,6 +46,9 @@ await copyFile(
   path.join(root, "assets/alr-logo.webp"),
   path.join(out, "assets/alr-logo.webp"),
 );
+for (const filename of ["favicon-alr-v2.svg", "favicon-alr-v2-32.png"]) {
+  await copyFile(path.join(root, "assets", filename), path.join(out, "assets", filename));
+}
 // Espelha os arquivos de entrada para manter a prévia estática da pasta funcionando.
 await copyFile(
   path.join(out, "assets/site.js"),
@@ -60,7 +63,7 @@ for (const [page, info] of Object.entries(PAGE_INFO)) {
   const folder = page === "home" ? out : path.join(out, page);
   await mkdir(folder, { recursive: true });
   const html = `<!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#174c37"><title>${escape(info.title)}</title><meta name="description" content="${escape(info.description)}"><meta property="og:title" content="${escape(info.title)}"><meta property="og:description" content="${escape(info.description)}"><meta property="og:type" content="website"><meta property="og:locale" content="pt_BR"><link rel="icon" href="${base}assets/alr-logo.webp"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="${base}assets/site.css"></head><body><noscript><style>.menu-toggle{display:none!important}.main-nav{display:flex!important;position:static!important;flex-wrap:wrap}.header-inner{flex-wrap:wrap}.contact-form-panel{display:none}.area-tabs{display:none!important}</style><div class="noscript-note">Para preparar uma mensagem, ative o JavaScript. Os contatos diretos da ALR continuam disponíveis.</div></noscript><div id="root" data-page="${page}" data-base="${base}">${render({ page, base })}</div><script type="module" src="${base}assets/site.js"></script></body></html>`;
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#174c37"><title>${escape(info.title)}</title><meta name="description" content="${escape(info.description)}"><meta property="og:title" content="${escape(info.title)}"><meta property="og:description" content="${escape(info.description)}"><meta property="og:type" content="website"><meta property="og:locale" content="pt_BR"><link rel="icon" type="image/png" sizes="32x32" href="${base}assets/favicon-alr-v2-32.png"><link rel="icon" type="image/svg+xml" sizes="any" href="${base}assets/favicon-alr-v2.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="${base}assets/site.css"></head><body><noscript><style>.menu-toggle{display:none!important}.main-nav{display:flex!important;position:static!important;flex-wrap:wrap}.header-inner{flex-wrap:wrap}.contact-form-panel{display:none}.area-tabs{display:none!important}</style><div class="noscript-note">Para preparar uma mensagem, ative o JavaScript. Os contatos diretos da ALR continuam disponíveis.</div></noscript><div id="root" data-page="${page}" data-base="${base}">${render({ page, base })}</div><script type="module" src="${base}assets/site.js"></script></body></html>`;
   await writeFile(path.join(folder, "index.html"), html);
   const sourceFolder = page === "home" ? root : path.join(root, page);
   await writeFile(path.join(sourceFolder, "index.html"), html);
